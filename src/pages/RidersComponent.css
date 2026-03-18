@@ -430,7 +430,9 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .riders-container {
-    padding: 16px;
+    padding: 32px;
+    background-color: #fafbfc;
+    min-height: 100vh;
   }
 
   .riders-header {
