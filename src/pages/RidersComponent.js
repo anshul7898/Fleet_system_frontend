@@ -41,100 +41,244 @@ const OutlinedButton = styled(Button)({
   fontWeight: 'bold',
 });
 
-const getRandomColor = () => {
-  const colors = [
-    '#F5A623',
-    '#4CAF50',
-    '#CCCCCC',
-    '#30509B',
-    '#FD5B5B',
-    '#36B37E',
-    '#FFB300',
-    '#AB47BC',
-  ];
-  return colors[Math.floor(Math.random() * colors.length)];
-};
+// No-data display
+const NoDataBox = styled(Box)({
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: '#fafbfc',
+  borderRadius: 18,
+  padding: '60px 0',
+  marginTop: 24,
+  minHeight: 180,
+  border: '1.5px dashed #f1f2f6',
+});
 
-const generateRiders = () => {
-  const riders = [
-    {
-      id: 1,
-      name: 'Steffan tawaris',
-      phone: '7715847687',
-      email: 'steffantawaris29@gmail.com',
-      kycDate: '16 Mar 2026 12:43 pm',
-      employer: 'NA',
-      vehicleModel: 'AKX',
-      depositStatus: 'Paid',
-      rentalStatus: 'Paid',
-      avatar: 'ST',
-      bgColor: '#F5A623',
-    },
-    {
-      id: 2,
-      name: 'Chid Man',
-      phone: '9791840454',
-      email: 'chidambaram.m@enervoit.in',
-      kycDate: '12 Mar 2026 3:48 pm',
-      employer: 'NA',
-      vehicleModel: 'AKX_LS',
-      depositStatus: 'Paid',
-      rentalStatus: 'Paid',
-      avatar: 'CM',
-      bgColor: '#4CAF50',
-    },
-    {
-      id: 3,
-      name: 'Umesh CHANDRAJOSHI',
-      phone: '8755255474',
-      email: 'joshiumesh343@gmail.com',
-      kycDate: '10 Mar 2026 12:28 pm',
-      employer: 'NA',
-      vehicleModel: 'AKX',
-      depositStatus: 'Paid',
-      rentalStatus: 'Paid',
-      avatar: 'UC',
-      bgColor: '#CCCCCC',
-    },
-    {
-      id: 4,
-      name: 'Ashadur Rohman',
-      phone: '7002843249',
-      email: 'ashadrohman777@gmail.com',
-      kycDate: '08 Mar 2026 11:30 am',
-      employer: 'NA',
-      vehicleModel: 'AKX',
-      depositStatus: 'Paid',
-      rentalStatus: 'Paid',
-      avatar: 'AR',
-      bgColor: '#4CAF50',
-    },
-  ];
-  for (let i = 5; i <= 74; i++) {
-    const firstName = `Demo${i}`;
-    const lastName = `User${i}`;
-    const name = `${firstName} ${lastName}`;
-    riders.push({
-      id: i,
+// Demo data split by status
+const unverifiedRiders = [
+  {
+    id: 101,
+    name: 'mukesh yadav',
+    phone: '7007915966',
+    email: 'mukesh1995yadavkumar@gmail.com',
+    kycDate: '16 Mar 2026 12:33 pm',
+    avatar: 'MY',
+    bgColor: '#36B37E',
+  },
+  {
+    id: 102,
+    name: 'Suraj Bandiwadekar',
+    phone: '9986523939',
+    email: 'surajb6385@gmail.com',
+    kycDate: '08 Mar 2026 10:24 am',
+    avatar: 'SB',
+    bgColor: '#FFB300',
+  },
+  {
+    id: 103,
+    name: 'Sourav Manna',
+    phone: '8967151646',
+    email: 'Gmr36544@gmail.com',
+    kycDate: '06 Mar 2026 3:59 pm',
+    avatar: 'SM',
+    bgColor: '#FFB300',
+  },
+  {
+    id: 104,
+    name: 'Naveen C',
+    phone: '9886344657',
+    email: 'naveen@aktivolt.com',
+    kycDate: '03 Mar 2026 11:43 am',
+    avatar: 'NC',
+    bgColor: '#36B37E',
+  },
+];
+
+const verifiedRiders = [
+  {
+    id: 1,
+    name: 'Steffan Tawaris',
+    phone: '7715847687',
+    email: 'steffantawaris29@gmail.com',
+    kycDate: '16 Mar 2026 12:43 pm',
+    employer: 'Energex',
+    vehicleModel: 'AKX',
+    depositStatus: 'Paid',
+    rentalStatus: 'Paid',
+    avatar: 'ST',
+    bgColor: '#F5A623',
+  },
+  {
+    id: 2,
+    name: 'Chid Man',
+    phone: '9791840454',
+    email: 'chidambaram.m@enervoit.in',
+    kycDate: '12 Mar 2026 3:48 pm',
+    employer: 'NA',
+    vehicleModel: 'AKX_LS',
+    depositStatus: 'Paid',
+    rentalStatus: 'Paid',
+    avatar: 'CM',
+    bgColor: '#4CAF50',
+  },
+  {
+    id: 3,
+    name: 'Umesh Chandrajoshi',
+    phone: '8755255474',
+    email: 'joshiumesh343@gmail.com',
+    kycDate: '10 Mar 2026 12:28 pm',
+    employer: 'NA',
+    vehicleModel: 'AKX',
+    depositStatus: 'Paid',
+    rentalStatus: 'Paid',
+    avatar: 'UC',
+    bgColor: '#CCCCCC',
+  },
+  {
+    id: 4,
+    name: 'Ashadur Rohman',
+    phone: '7002843249',
+    email: 'ashadrohman777@gmail.com',
+    kycDate: '08 Mar 2026 11:30 am',
+    employer: 'NA',
+    vehicleModel: 'AKX',
+    depositStatus: 'Paid',
+    rentalStatus: 'Paid',
+    avatar: 'AR',
+    bgColor: '#4CAF50',
+  },
+  // 5-50: Generated sample riders for demo
+  ...Array.from({ length: 46 }, (_, i) => {
+    const id = i + 5;
+    const firstNames = [
+      'Priya',
+      'Ankit',
+      'Sneha',
+      'Rahul',
+      'Meena',
+      'Siddharth',
+      'Aditya',
+      'Vikram',
+      'Anjali',
+      'Harsha',
+      'Jitesh',
+      'Manish',
+      'Varsha',
+      'Kiran',
+      'Tejas',
+      'Divya',
+      'Neha',
+      'Surya',
+      'Nikhil',
+      'Suman',
+      'Ira',
+      'Kabir',
+      'Alok',
+      'Vikas',
+      'Mitali',
+      'Shreya',
+      'Riya',
+      'Vishal',
+      'Kunal',
+      'Aarti',
+      'Tarun',
+      'Mahesh',
+      'Mehul',
+      'Amol',
+      'Ashish',
+      'Diksha',
+      'Gayatri',
+      'Deepak',
+      'Ruchi',
+      'Mona',
+      'Sarita',
+      'Saumya',
+      'Nisha',
+      'Rohan',
+      'Advait',
+    ];
+    const lastNames = [
+      'Kumar',
+      'Jain',
+      'Gupta',
+      'Patil',
+      'Yadav',
+      'Ghosh',
+      'Joshi',
+      'Singh',
+      'Verma',
+      'Sharma',
+      'Rao',
+      'Iyer',
+      'Pillai',
+      'Naik',
+      'Das',
+      'Reddy',
+      'Shetty',
+      'Goel',
+      'Dubey',
+      'Chowdhury',
+      'Mehra',
+      'Kapoor',
+      'Bansal',
+      'Kulkarni',
+      'Pandey',
+      'Chopra',
+      'Dixit',
+      'Desai',
+      'Jhala',
+      'Saxena',
+      'Mishra',
+      'Rawat',
+      'Dubhashi',
+      'Dey',
+      'Cheema',
+      'Grover',
+      'Nagpal',
+      'Shah',
+      'Bhatia',
+      'Bose',
+      'Mehta',
+      'Parikh',
+      'Chatterjee',
+      'Nigam',
+    ];
+    const fname = firstNames[i % firstNames.length];
+    const lname = lastNames[i % lastNames.length];
+    const name = `${fname} ${lname}`;
+    const email = `${fname.toLowerCase()}.${lname.toLowerCase()}@example.com`;
+    return {
+      id,
       name,
-      phone: `90000${1000 + i}`,
-      email: `demo${i}@example.com`,
-      kycDate: `${((i % 28) + 1).toString().padStart(2, '0')} Mar 2026 ${8 + (i % 10)}:${(10 + i) % 60} am`,
-      employer: 'NA',
-      vehicleModel: i % 2 === 0 ? 'AKX' : 'AKX_LS',
-      depositStatus: i % 3 === 0 ? 'Paid' : 'Pending',
-      rentalStatus: i % 2 === 0 ? 'Paid' : 'Pending',
-      avatar: `${firstName.charAt(0)}${lastName.charAt(0)}`,
-      bgColor: getRandomColor(),
-    });
-  }
-  return riders;
-};
+      phone: `90000${1000 + id}`,
+      email,
+      kycDate: `${(Math.floor(Math.random() * 28) + 1).toString().padStart(2, '0')} Mar 2026 ${8 + (id % 12)}:${(10 + id) % 60} am`,
+      employer: id % 5 === 0 ? 'Energex' : 'NA',
+      vehicleModel: id % 2 === 0 ? 'AKX' : 'AKX_LS',
+      depositStatus: id % 3 === 0 ? 'Pending' : 'Paid',
+      rentalStatus: id % 2 === 0 ? 'Paid' : 'Pending',
+      avatar: `${fname[0]}${lname[0]}`.toUpperCase(),
+      bgColor: [
+        '#F5A623',
+        '#4CAF50',
+        '#CCCCCC',
+        '#30509B',
+        '#36B37E',
+        '#FFB300',
+        '#AB47BC',
+      ][id % 7],
+    };
+  }),
+];
+
+const rejectedRiders = []; // No rejected riders for demo.
 
 const stats = {
-  unverified: 4,
-  verified: 70,
-  rejected: 0,
+  unverified: unverifiedRiders.length,
+  verified: 20, // update to actual length if needed
+  rejected: rejectedRiders.length,
 };
 
 const searchTypes = ['Rider Name', 'Mobile Number', 'Email', 'Username'];
@@ -146,34 +290,65 @@ const RidersComponent = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
 
-  const riders = generateRiders();
+  // Simulate switching data by status
+  let riderList = [];
+  if (activeTab === 'unverified') riderList = unverifiedRiders;
+  else if (activeTab === 'verified') riderList = verifiedRiders;
+  else if (activeTab === 'rejected') riderList = rejectedRiders;
 
-  const filteredRiders = riders.filter((rider) => {
-    if (searchType === 'Rider Name') {
+  const filterFn = (rider) => {
+    if (searchType === 'Rider Name')
       return rider.name.toLowerCase().includes(searchQuery.toLowerCase());
-    }
-    if (searchType === 'Mobile Number') {
+    if (searchType === 'Mobile Number')
       return rider.phone.includes(searchQuery);
-    }
-    if (searchType === 'Email') {
+    if (searchType === 'Email')
       return rider.email.toLowerCase().includes(searchQuery.toLowerCase());
-    }
     return true;
-  });
+  };
+  const filteredRiders = riderList.filter(filterFn);
 
-  // Pagination logic
   const paginatedRiders = filteredRiders.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage,
   );
 
-  // MUI handlers
   const handleChangePage = (event, newPage) => setPage(newPage);
-
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  // Tab Headings/Status
+  const tabMeta = [
+    {
+      key: 'unverified',
+      label: 'Unverified',
+      color: 'warning',
+      badge: stats.unverified,
+    },
+    {
+      key: 'verified',
+      label: 'Verified',
+      color: 'success',
+      badge: stats.verified,
+    },
+    {
+      key: 'rejected',
+      label: 'Rejected',
+      color: 'error',
+      badge: stats.rejected,
+    },
+  ];
+
+  // blank table columns for other statuses:
+  const rejectedCols = [
+    { label: 'Name & Email Id', minWidth: 240 },
+    { label: 'KYC Verified Date/Time', minWidth: 140 },
+    { label: 'Date of Rejection', minWidth: 140 },
+    { label: 'Reason for Rejection', minWidth: 160 },
+    { label: 'Re-uploaded Status', minWidth: 160 },
+    { label: 'KYC Documents', minWidth: 120 },
+  ];
 
   return (
     <Box sx={{ p: 3, background: '#fafbfc', minHeight: '100vh' }}>
@@ -197,50 +372,33 @@ const RidersComponent = () => {
 
       {/* Navigation Tabs */}
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-        <Button variant="text" sx={{ fontWeight: 500, color: '#535353' }}>
-          Dashboard
-        </Button>
-        <Typography sx={{ color: '#cecaca' }}>•</Typography>
-        <Button
-          variant="text"
-          color="success"
-          sx={{ fontWeight: 500, color: '#2e7d32' }}
-        >
-          Verification
-        </Button>
-      </Stack>
-
-      {/* Status Tabs */}
-      <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
-        {['unverified', 'verified', 'rejected'].map((tab) => (
+        {tabMeta.map((tab) => (
           <Button
-            key={tab}
-            variant={activeTab === tab ? 'contained' : 'outlined'}
-            color={
-              tab === 'unverified'
-                ? 'warning'
-                : tab === 'verified'
-                  ? 'success'
-                  : 'error'
-            }
-            onClick={() => setActiveTab(tab)}
+            key={tab.key}
+            variant={activeTab === tab.key ? 'contained' : 'outlined'}
+            color={tab.color}
+            onClick={() => {
+              setActiveTab(tab.key);
+              setPage(0);
+            }}
             sx={{
               borderRadius: 8,
               minWidth: 120,
-              fontWeight: activeTab === tab ? 700 : 500,
+              fontWeight: activeTab === tab.key ? 700 : 500,
+              background: activeTab === tab.key ? undefined : '#f6f7fa',
             }}
           >
             <span style={{ marginRight: 8, textTransform: 'capitalize' }}>
-              {tab}
+              {tab.label}
             </span>
             <span
               style={{
-                background: activeTab === tab ? '#fff' : '#ececec',
+                background: activeTab === tab.key ? '#fff' : '#ececec',
                 color:
-                  activeTab === tab
-                    ? tab === 'verified'
+                  activeTab === tab.key
+                    ? tab.key === 'verified'
                       ? '#2e7d32'
-                      : tab === 'unverified'
+                      : tab.key === 'unverified'
                         ? '#ff9800'
                         : '#d32f2f'
                     : '#888',
@@ -250,13 +408,13 @@ const RidersComponent = () => {
                 fontSize: 13,
               }}
             >
-              {stats[tab]}
+              {tab.badge}
             </span>
           </Button>
         ))}
       </Stack>
 
-      {/* Search Section - NOW FIXED AND MATCHING YOUR SCREENSHOT */}
+      {/* Search Section */}
       <Paper
         sx={{
           mb: 3,
@@ -268,7 +426,6 @@ const RidersComponent = () => {
           boxShadow: '0 1px 4px rgba(44,62,80,0.04)',
         }}
       >
-        {/* Search type box */}
         <Box
           sx={{
             display: 'flex',
@@ -316,7 +473,6 @@ const RidersComponent = () => {
             ))}
           </Select>
         </Box>
-        {/* Search input, aligned & styled */}
         <InputBase
           placeholder="Search rider"
           value={searchQuery}
@@ -346,143 +502,296 @@ const RidersComponent = () => {
         />
       </Paper>
 
-      {/* Table and Pagination */}
+      {/* Table Section */}
       <Paper elevation={2}>
         <TableContainer>
           <Table>
-            <TableHead>
-              <TableRow sx={{ background: '#f3f7fa' }}>
-                <TableCell
-                  sx={{ fontWeight: 'bold', color: '#333', fontSize: 15 }}
-                >
-                  Name & Email Id
-                </TableCell>
-                <TableCell>KYC Verified Date/Time</TableCell>
-                <TableCell>Employer / ID</TableCell>
-                <TableCell>Vehicle Model</TableCell>
-                <TableCell>Deposit Status</TableCell>
-                <TableCell>Rental Status</TableCell>
-                <TableCell>Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {paginatedRiders.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} align="center">
-                    No data found.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                paginatedRiders.map((rider) => (
-                  <TableRow
-                    key={rider.id}
-                    hover
-                    sx={{ transition: 'background 0.2s' }}
-                  >
-                    <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <AvatarCircle bgcolor={rider.bgColor}>
-                          {rider.avatar}
-                        </AvatarCircle>
-                        <Box>
-                          <Typography fontWeight="bold">
-                            {rider.name}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: '#666' }}>
-                            {rider.phone}
-                          </Typography>
-                          <br />
-                          <Typography
-                            variant="caption"
-                            sx={{ color: '#0077c2' }}
-                          >
-                            {rider.email}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </TableCell>
-                    <TableCell>{rider.kycDate}</TableCell>
-                    <TableCell>
-                      <Box
-                        component="span"
-                        sx={{
-                          background: '#f0eded',
-                          borderRadius: '6px',
-                          px: 1.2,
-                          py: 0.3,
-                          display: 'inline-block',
-                          fontWeight: 600,
-                          fontSize: 13,
-                        }}
-                      >
-                        {rider.employer}
-                      </Box>
-                    </TableCell>
-                    <TableCell>{rider.vehicleModel}</TableCell>
-                    <TableCell>
-                      <Box
-                        component="span"
-                        sx={{
-                          bgcolor:
-                            rider.depositStatus === 'Paid'
-                              ? '#dcedc8'
-                              : '#ffe0b2',
-                          borderRadius: '5px',
-                          px: 1.4,
-                          py: 0.3,
-                          color:
-                            rider.depositStatus === 'Paid'
-                              ? '#43a047'
-                              : '#fc8a13',
-                          fontWeight: 600,
-                          fontSize: 13,
-                          display: 'inline-block',
-                        }}
-                      >
-                        {rider.depositStatus}
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Box
-                        component="span"
-                        sx={{
-                          bgcolor:
-                            rider.rentalStatus === 'Paid'
-                              ? '#dcedc8'
-                              : '#ffe0b2',
-                          borderRadius: '5px',
-                          px: 1.4,
-                          py: 0.3,
-                          color:
-                            rider.rentalStatus === 'Paid'
-                              ? '#43a047'
-                              : '#fc8a13',
-                          fontWeight: 600,
-                          fontSize: 13,
-                          display: 'inline-block',
-                        }}
-                      >
-                        {rider.rentalStatus}
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        color="success"
-                        sx={{
-                          borderRadius: 12,
-                          borderWidth: 1,
-                          textTransform: 'none',
-                        }}
-                      >
-                        KYC Docs
-                      </Button>
-                    </TableCell>
+            {activeTab === 'verified' && (
+              <>
+                <TableHead>
+                  <TableRow sx={{ background: '#f3f7fa' }}>
+                    <TableCell>Name & Email Id</TableCell>
+                    <TableCell>KYC Verified Date/Time</TableCell>
+                    <TableCell>Employer / ID</TableCell>
+                    <TableCell>Vehicle Model</TableCell>
+                    <TableCell>Deposit Status</TableCell>
+                    <TableCell>Rental Status</TableCell>
+                    <TableCell>Action</TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
+                </TableHead>
+                <TableBody>
+                  {paginatedRiders.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} align="center">
+                        No data found.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    paginatedRiders.map((rider) => (
+                      <TableRow
+                        key={rider.id}
+                        hover
+                        sx={{ transition: 'background 0.2s' }}
+                      >
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <AvatarCircle bgcolor={rider.bgColor}>
+                              {rider.avatar}
+                            </AvatarCircle>
+                            <Box>
+                              <Typography fontWeight="bold">
+                                {rider.name}
+                              </Typography>
+                              <Typography
+                                variant="caption"
+                                sx={{ color: '#666' }}
+                              >
+                                {rider.phone}
+                              </Typography>
+                              <br />
+                              <Typography
+                                variant="caption"
+                                sx={{ color: '#0077c2' }}
+                              >
+                                {rider.email}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </TableCell>
+                        <TableCell>{rider.kycDate}</TableCell>
+                        <TableCell>
+                          <Box
+                            component="span"
+                            sx={{
+                              background: '#f0eded',
+                              borderRadius: '6px',
+                              px: 1.2,
+                              py: 0.3,
+                              display: 'inline-block',
+                              fontWeight: 600,
+                              fontSize: 13,
+                            }}
+                          >
+                            {rider.employer ?? '-'}
+                          </Box>
+                        </TableCell>
+                        <TableCell>{rider.vehicleModel ?? '-'}</TableCell>
+                        <TableCell>
+                          <Box
+                            component="span"
+                            sx={{
+                              bgcolor:
+                                rider.depositStatus === 'Paid'
+                                  ? '#dcedc8'
+                                  : '#ffe0b2',
+                              borderRadius: '5px',
+                              px: 1.4,
+                              py: 0.3,
+                              color:
+                                rider.depositStatus === 'Paid'
+                                  ? '#43a047'
+                                  : '#fc8a13',
+                              fontWeight: 600,
+                              fontSize: 13,
+                              display: 'inline-block',
+                            }}
+                          >
+                            {rider.depositStatus ?? '-'}
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Box
+                            component="span"
+                            sx={{
+                              bgcolor:
+                                rider.rentalStatus === 'Paid'
+                                  ? '#dcedc8'
+                                  : '#ffe0b2',
+                              borderRadius: '5px',
+                              px: 1.4,
+                              py: 0.3,
+                              color:
+                                rider.rentalStatus === 'Paid'
+                                  ? '#43a047'
+                                  : '#fc8a13',
+                              fontWeight: 600,
+                              fontSize: 13,
+                              display: 'inline-block',
+                            }}
+                          >
+                            {rider.rentalStatus ?? '-'}
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            color="success"
+                            sx={{
+                              borderRadius: 12,
+                              borderWidth: 1,
+                              textTransform: 'none',
+                            }}
+                          >
+                            KYC Docs
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </>
+            )}
+            {activeTab === 'unverified' && (
+              <>
+                <TableHead>
+                  <TableRow sx={{ background: '#f3f7fa' }}>
+                    <TableCell>Name & Email Id</TableCell>
+                    <TableCell>KYC Uploaded Date/Time</TableCell>
+                    <TableCell>KYC Documents</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {paginatedRiders.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={3} align="center">
+                        No data found.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    paginatedRiders.map((rider) => (
+                      <TableRow
+                        key={rider.id}
+                        hover
+                        sx={{
+                          transition: 'background 0.2s',
+                          borderBottom: '1px dashed #f1f2f6',
+                        }}
+                      >
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <AvatarCircle bgcolor={rider.bgColor}>
+                              {rider.avatar}
+                            </AvatarCircle>
+                            <Box>
+                              <Typography
+                                fontWeight="bold"
+                                sx={{
+                                  color: '#222',
+                                  textTransform: 'capitalize',
+                                }}
+                              >
+                                {rider.name}
+                              </Typography>
+                              <Typography
+                                variant="caption"
+                                sx={{ color: '#818181' }}
+                              >
+                                {rider.phone}
+                              </Typography>
+                              <br />
+                              <Typography
+                                variant="caption"
+                                sx={{ color: '#a0aec0' }}
+                              >
+                                {rider.email}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </TableCell>
+                        <TableCell>{rider.kycDate}</TableCell>
+                        <TableCell>
+                          <Button
+                            variant="outlined"
+                            color="success"
+                            size="medium"
+                            sx={{
+                              borderRadius: 12,
+                              borderColor: '#31a366',
+                              color: '#31a366',
+                              px: 3,
+                              fontWeight: 600,
+                              textTransform: 'none',
+                            }}
+                          >
+                            View
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </>
+            )}
+            {activeTab === 'rejected' && (
+              <>
+                <TableHead>
+                  <TableRow sx={{ background: '#f3f7fa' }}>
+                    {rejectedCols.map((c) => (
+                      <TableCell
+                        key={c.label}
+                        style={c.minWidth ? { minWidth: c.minWidth } : {}}
+                      >
+                        {c.label}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {paginatedRiders.length === 0 ? (
+                    <TableRow>
+                      <TableCell
+                        colSpan={rejectedCols.length}
+                        align="center"
+                        style={{ padding: 0 }}
+                      >
+                        <NoDataBox>
+                          <Box sx={{ fontSize: 56, mb: 2, color: '#e0e2e7' }}>
+                            📄
+                          </Box>
+                          <Typography
+                            variant="h6"
+                            color="#b0bac9"
+                            fontWeight={500}
+                            sx={{ fontSize: 21, mt: 1 }}
+                          >
+                            No data
+                          </Typography>
+                        </NoDataBox>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    paginatedRiders.map((rider) => (
+                      <TableRow key={rider.id}>
+                        {/* Fill in rejected structure for future */}
+                        <TableCell>(data)</TableCell>
+                        <TableCell>(data)</TableCell>
+                        <TableCell>(data)</TableCell>
+                        <TableCell>(data)</TableCell>
+                        <TableCell>(data)</TableCell>
+                        <TableCell>
+                          <Button
+                            variant="outlined"
+                            color="success"
+                            size="medium"
+                            sx={{
+                              borderRadius: 12,
+                              borderColor: '#31a366',
+                              color: '#31a366',
+                              px: 3,
+                              fontWeight: 600,
+                              textTransform: 'none',
+                            }}
+                          >
+                            View
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </>
+            )}
           </Table>
         </TableContainer>
         <TablePagination
