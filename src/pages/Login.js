@@ -17,7 +17,6 @@ export default function Login() {
   const [requiresNewPassword, setRequiresNewPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-
   const styles = {
     pageContainer: {
       minHeight: '100vh',
