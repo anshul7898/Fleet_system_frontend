@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { signOut } from 'aws-amplify/auth';
 import {
   Table,
   TableBody,
@@ -19,7 +21,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-// Styled avatar for table
+// ... (all your styled components remain the same)
 const AvatarCircle = styled('div')(({ bgcolor }) => ({
   width: 40,
   height: 40,
@@ -42,7 +44,6 @@ const OutlinedButton = styled(Button)({
   fontWeight: 'bold',
 });
 
-// No-data display
 const NoDataBox = styled(Box)({
   width: '100%',
   display: 'flex',
@@ -57,7 +58,6 @@ const NoDataBox = styled(Box)({
   border: '1.5px dashed #f1f2f6',
 });
 
-// Status colors for avatars (rotating)
 const statusColors = [
   '#F5A623',
   '#4CAF50',
@@ -68,7 +68,6 @@ const statusColors = [
   '#AB47BC',
 ];
 
-// Utility to get initials
 const getAvatar = (firstName, lastName) => {
   if (firstName && lastName) return (firstName[0] + lastName[0]).toUpperCase();
   if (firstName) return firstName[0].toUpperCase();
@@ -78,6 +77,7 @@ const getAvatar = (firstName, lastName) => {
 const searchTypes = ['Rider Name', 'Mobile Number', 'Email', 'Username'];
 
 const RidersComponent = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('verified');
   const [searchType, setSearchType] = useState('Rider Name');
   const [searchQuery, setSearchQuery] = useState('');
@@ -88,6 +88,7 @@ const RidersComponent = () => {
   const [riders, setRiders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState('');
+  const [loggingOut, setLoggingOut] = useState(false);
 
   // Fetch data from FastAPI
   useEffect(() => {
@@ -111,10 +112,22 @@ const RidersComponent = () => {
     fetchRiders();
   }, []);
 
-  // Partition by status (tweak logic to fit your backend data!)
-  // Example status logic: if KYCVerifiedDateTime is set, it's 'verified'
-  // If ReasonforRejection is set, 'rejected'.
-  // If KYCVerifiedDateTime and ReasonforRejection are both empty, 'unverified'.
+  // Handle logout
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await signOut();
+      sessionStorage.removeItem('isLoggedIn');
+      navigate('/', { replace: true });
+    } catch (err) {
+      console.error('Logout error:', err);
+      // Force logout even if error occurs
+      sessionStorage.removeItem('isLoggedIn');
+      navigate('/', { replace: true });
+    }
+  };
+
+  // Partition by status
   const getRiderStatus = (rider) => {
     if (rider.ReasonforRejection && rider.ReasonforRejection !== '')
       return 'rejected';
@@ -148,7 +161,7 @@ const RidersComponent = () => {
       name: `${rider.FirstName} ${rider.LastName}`,
       phone: rider.MobileNumber,
       email: rider.Email,
-      kycDate: rider.KYCUploadedDateTime, // Show upload datetime
+      kycDate: rider.KYCUploadedDateTime,
       avatar: getAvatar(rider.FirstName, rider.LastName),
       bgColor: statusColors[i % statusColors.length],
     }));
@@ -203,7 +216,6 @@ const RidersComponent = () => {
     setPage(0);
   };
 
-  // Tab Headings/Status
   const tabMeta = [
     {
       key: 'unverified',
@@ -225,7 +237,6 @@ const RidersComponent = () => {
     },
   ];
 
-  // blank table columns for rejected:
   const rejectedCols = [
     { label: 'Name & Email Id', minWidth: 240 },
     { label: 'KYC Verified Date/Time', minWidth: 140 },
@@ -247,11 +258,31 @@ const RidersComponent = () => {
         <Typography variant="h4" fontWeight={700}>
           Riders
         </Typography>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Button variant="contained" color="primary">
+            + Add Rider
+          </Button>
           <Button variant="contained" color="primary">
             + Invite Rider
           </Button>
           <OutlinedButton>📥 Export Verified</OutlinedButton>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={handleLogout}
+            disabled={loggingOut}
+            sx={{
+              borderRadius: '20px',
+              textTransform: 'none',
+              fontWeight: 'bold',
+              borderWidth: '1.5px',
+              '&:hover': {
+                borderWidth: '1.5px',
+              },
+            }}
+          >
+            {loggingOut ? 'Logging out...' : 'Logout'}
+          </Button>
         </Stack>
       </Stack>
 
@@ -643,7 +674,7 @@ const RidersComponent = () => {
                         >
                           <NoDataBox>
                             <Box sx={{ fontSize: 56, mb: 2, color: '#e0e2e7' }}>
-                              ���
+                              📋
                             </Box>
                             <Typography
                               variant="h6"
@@ -702,7 +733,6 @@ const RidersComponent = () => {
                                 textTransform: 'none',
                               }}
                               onClick={() => {
-                                // You can link/view KYC doc here, if available
                                 if (rider.kycDoc)
                                   window.open(rider.kycDoc, '_blank');
                               }}
