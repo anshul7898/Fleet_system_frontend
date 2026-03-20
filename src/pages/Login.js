@@ -6,6 +6,7 @@ import {
   signOut,
   getCurrentUser,
 } from 'aws-amplify/auth';
+import loginImage from '../assets/login Image.jpg';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -18,15 +19,35 @@ export default function Login() {
   const [error, setError] = useState('');
 
   const styles = {
-    page: {
+    pageContainer: {
       minHeight: '100vh',
       display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 20,
       background: '#ffffff',
       fontFamily:
         'system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif',
+    },
+    imageSection: {
+      flex: 1,
+      background: '#4CAF50',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '40px',
+      minWidth: '450px',
+    },
+    image: {
+      maxWidth: '100%',
+      height: 'auto',
+      maxHeight: '100vh',
+      objectFit: 'contain',
+    },
+    formSection: {
+      flex: 1,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '40px',
+      minWidth: '400px',
     },
     card: {
       width: '100%',
@@ -194,106 +215,116 @@ export default function Login() {
   };
 
   return (
-    <div style={styles.page}>
-      <form
-        onSubmit={requiresNewPassword ? handleSetNewPassword : handleSubmit}
-        style={styles.card}
-      >
-        <h2 style={styles.title}>
-          {requiresNewPassword ? 'Set New Password' : 'Login'}
-        </h2>
+    <div style={styles.pageContainer}>
+      {/* Left Side - Image */}
+      <div style={styles.imageSection}>
+        <img src={loginImage} alt="Login" style={styles.image} />
+      </div>
 
-        {!requiresNewPassword ? (
-          <>
-            <div style={styles.field}>
-              <label style={styles.label} htmlFor="username">
-                Username / Email
-              </label>
-              <input
-                id="username"
-                type="text"
-                autoComplete="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                style={styles.input}
-                placeholder="Enter username or email"
-                required
-              />
-            </div>
-
-            <div style={styles.field}>
-              <label style={styles.label} htmlFor="password">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={styles.input}
-                placeholder="Enter password"
-                required
-              />
-            </div>
-          </>
-        ) : (
-          <>
-            <div style={styles.field}>
-              <label style={styles.label} htmlFor="newPassword">
-                New Password
-              </label>
-              <input
-                id="newPassword"
-                type="password"
-                autoComplete="new-password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                style={styles.input}
-                placeholder="Enter a new password"
-                required
-              />
-            </div>
-
-            <div style={styles.hint}>
-              Your account requires a password change on first login.
-            </div>
-          </>
-        )}
-
-        {error ? <div style={styles.error}>{error}</div> : null}
-
-        <button
-          type="submit"
-          disabled={submitting}
-          style={{
-            ...styles.button,
-            ...(submitting ? styles.buttonDisabled : null),
-          }}
+      {/* Right Side - Form */}
+      <div style={styles.formSection}>
+        <form
+          onSubmit={requiresNewPassword ? handleSetNewPassword : handleSubmit}
+          style={styles.card}
         >
-          {submitting
-            ? requiresNewPassword
-              ? 'Saving...'
-              : 'Signing in...'
-            : requiresNewPassword
-              ? 'Set Password & Continue'
-              : 'Sign in'}
-        </button>
+          <h2 style={styles.title}>
+            {requiresNewPassword
+              ? 'Set New Password'
+              : 'Sign in to your account'}
+          </h2>
 
-        {requiresNewPassword ? (
+          {!requiresNewPassword ? (
+            <>
+              <div style={styles.field}>
+                <label style={styles.label} htmlFor="username">
+                  Username / Email
+                </label>
+                <input
+                  id="username"
+                  type="text"
+                  autoComplete="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  style={styles.input}
+                  placeholder="Enter username or email"
+                  required
+                />
+              </div>
+
+              <div style={styles.field}>
+                <label style={styles.label} htmlFor="password">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={styles.input}
+                  placeholder="Enter password"
+                  required
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div style={styles.field}>
+                <label style={styles.label} htmlFor="newPassword">
+                  New Password
+                </label>
+                <input
+                  id="newPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  style={styles.input}
+                  placeholder="Enter a new password"
+                  required
+                />
+              </div>
+
+              <div style={styles.hint}>
+                Your account requires a password change on first login.
+              </div>
+            </>
+          )}
+
+          {error ? <div style={styles.error}>{error}</div> : null}
+
           <button
-            type="button"
-            onClick={handleBackToLogin}
+            type="submit"
             disabled={submitting}
             style={{
-              ...styles.buttonSecondary,
+              ...styles.button,
               ...(submitting ? styles.buttonDisabled : null),
             }}
           >
-            Back
+            {submitting
+              ? requiresNewPassword
+                ? 'Saving...'
+                : 'Signing in...'
+              : requiresNewPassword
+                ? 'Set Password & Continue'
+                : 'Sign in'}
           </button>
-        ) : null}
-      </form>
+
+          {requiresNewPassword ? (
+            <button
+              type="button"
+              onClick={handleBackToLogin}
+              disabled={submitting}
+              style={{
+                ...styles.buttonSecondary,
+                ...(submitting ? styles.buttonDisabled : null),
+              }}
+            >
+              Back
+            </button>
+          ) : null}
+        </form>
+      </div>
     </div>
   );
 }
