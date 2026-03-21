@@ -161,6 +161,7 @@ const Sidebar = ({ open, onToggle }) => {
 
   const handleNavigation = (path) => {
     navigate(path);
+    onToggle(); // Close sidebar after navigation
   };
 
   const isActive = (path) => location.pathname === path;
@@ -255,8 +256,8 @@ const Sidebar = ({ open, onToggle }) => {
             </SubListItem>
             <SubListItem
               button
-              active={isActive('/riders/verification')}
-              onClick={() => handleNavigation('/riders/verification')}
+              active={isActive('/RidersComponent')}
+              onClick={() => handleNavigation('/RidersComponent')}
             >
               <ListItemText primary="Verification" />
             </SubListItem>
