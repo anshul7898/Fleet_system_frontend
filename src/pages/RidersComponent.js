@@ -237,38 +237,86 @@ const RidersComponent = () => {
     setPage(0);
   };
 
-  // Export verified riders to Excel
-  const handleExportVerified = async () => {
+  // Export function based on active tab
+  const handleExport = async () => {
     setExporting(true);
     try {
-      // Prepare data for export with all required fields
-      const exportData = verifiedRiders.map((rider) => ({
-        Name: rider.name,
-        Email: rider.email,
-        Phone: rider.phone,
-        'Verification Date': rider.kycDate,
-        'Current Employer': rider.employer,
-        'Vehicle Model': rider.vehicleModel,
-        'Employer Name': 'N/A', // These fields may need to come from your data
-        'Employer ID': 'N/A', // Adjust based on your actual data structure
-      }));
+      let exportData = [];
+      let fileName = '';
+      let sheetName = '';
+
+      if (activeTab === 'verified') {
+        exportData = verifiedRiders.map((rider) => ({
+          Name: rider.name,
+          Email: rider.email,
+          Phone: rider.phone,
+          'Verification Date': rider.kycDate,
+          'Current Employer': rider.employer,
+          'Vehicle Model': rider.vehicleModel,
+          'Employer Name': 'N/A',
+          'Employer ID': 'N/A',
+        }));
+        fileName = 'Riders_Verified.xlsx';
+        sheetName = 'Verified Riders';
+      } else if (activeTab === 'unverified') {
+        exportData = unverifiedRiders.map((rider) => ({
+          Name: rider.name,
+          Email: rider.email,
+          Phone: rider.phone,
+          'Upload Date': rider.kycDate,
+        }));
+        fileName = 'Riders_Unverified.xlsx';
+        sheetName = 'Unverified Riders';
+      } else if (activeTab === 'rejected') {
+        exportData = rejectedRiders.map((rider) => ({
+          Name: rider.name,
+          Email: rider.email,
+          Phone: rider.phone,
+          'KYC Verified Date': rider.kycDate,
+          'Date of Rejection': rider.dateOfRejection,
+          'Reason for Rejection': rider.reason,
+          'Re-uploaded Status': rider.reuploadedStatus,
+        }));
+        fileName = 'Riders_Rejected.xlsx';
+        sheetName = 'Rejected Riders';
+      }
 
       // Create a new workbook
       const ws = XLSX.utils.json_to_sheet(exportData);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Verified Riders');
+      XLSX.utils.book_append_sheet(wb, ws, sheetName);
 
-      // Set column widths
-      const colWidths = [
-        { wch: 20 }, // Name
-        { wch: 30 }, // Email
-        { wch: 15 }, // Phone
-        { wch: 20 }, // Verification Date
-        { wch: 18 }, // Current Employer
-        { wch: 15 }, // Vehicle Model
-        { wch: 15 }, // Employer Name
-        { wch: 15 }, // Employer ID
-      ];
+      // Set column widths based on tab
+      let colWidths = [];
+      if (activeTab === 'verified') {
+        colWidths = [
+          { wch: 20 }, // Name
+          { wch: 30 }, // Email
+          { wch: 15 }, // Phone
+          { wch: 20 }, // Verification Date
+          { wch: 18 }, // Current Employer
+          { wch: 15 }, // Vehicle Model
+          { wch: 15 }, // Employer Name
+          { wch: 15 }, // Employer ID
+        ];
+      } else if (activeTab === 'unverified') {
+        colWidths = [
+          { wch: 20 }, // Name
+          { wch: 30 }, // Email
+          { wch: 15 }, // Phone
+          { wch: 20 }, // Upload Date
+        ];
+      } else if (activeTab === 'rejected') {
+        colWidths = [
+          { wch: 20 }, // Name
+          { wch: 30 }, // Email
+          { wch: 15 }, // Phone
+          { wch: 20 }, // KYC Verified Date
+          { wch: 20 }, // Date of Rejection
+          { wch: 30 }, // Reason for Rejection
+          { wch: 20 }, // Re-uploaded Status
+        ];
+      }
       ws['!cols'] = colWidths;
 
       // Style header row
@@ -310,9 +358,6 @@ const RidersComponent = () => {
         }
       }
 
-      // Generate filename
-      const fileName = 'Riders_Verified.xlsx';
-
       // Write the file
       XLSX.writeFile(wb, fileName);
     } catch (error) {
@@ -321,6 +366,21 @@ const RidersComponent = () => {
     } finally {
       setExporting(false);
     }
+  };
+
+  // Determine export button text and disabled state
+  const getExportButtonLabel = () => {
+    if (activeTab === 'verified') return '📥 Export Verified';
+    if (activeTab === 'unverified') return '📥 Export Unverified';
+    if (activeTab === 'rejected') return '📥 Export Rejected';
+    return '📥 Export';
+  };
+
+  const isExportDisabled = () => {
+    if (activeTab === 'verified') return verifiedRiders.length === 0;
+    if (activeTab === 'unverified') return unverifiedRiders.length === 0;
+    if (activeTab === 'rejected') return rejectedRiders.length === 0;
+    return true;
   };
 
   const tabMeta = [
@@ -389,10 +449,10 @@ const RidersComponent = () => {
               + Invite Rider
             </Button>
             <OutlinedButton
-              onClick={handleExportVerified}
-              disabled={exporting || verifiedRiders.length === 0}
+              onClick={handleExport}
+              disabled={exporting || isExportDisabled()}
             >
-              {exporting ? '⏳ Exporting...' : '📥 Export Verified'}
+              {exporting ? '⏳ Exporting...' : getExportButtonLabel()}
             </OutlinedButton>
             <Button
               variant="outlined"
