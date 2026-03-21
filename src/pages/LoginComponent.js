@@ -130,7 +130,7 @@ export default function Login() {
 
   const redirectAfterLogin = () => {
     persistLogin();
-    navigate('/RidersComponent', { replace: true });
+    navigate('/DashboardComponent', { replace: true });
   };
 
   const handleSubmit = async (e) => {
