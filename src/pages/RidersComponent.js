@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
+import * as XLSX from 'xlsx';
 
 // Styled avatar for table
 const AvatarCircle = styled('div')(({ bgcolor }) => ({
@@ -109,6 +110,7 @@ const RidersComponent = () => {
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState('');
   const [loggingOut, setLoggingOut] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   // Fetch data from FastAPI
   useEffect(() => {
@@ -235,6 +237,92 @@ const RidersComponent = () => {
     setPage(0);
   };
 
+  // Export verified riders to Excel
+  const handleExportVerified = async () => {
+    setExporting(true);
+    try {
+      // Prepare data for export with all required fields
+      const exportData = verifiedRiders.map((rider) => ({
+        Name: rider.name,
+        Email: rider.email,
+        Phone: rider.phone,
+        'Verification Date': rider.kycDate,
+        'Current Employer': rider.employer,
+        'Vehicle Model': rider.vehicleModel,
+        'Employer Name': 'N/A', // These fields may need to come from your data
+        'Employer ID': 'N/A', // Adjust based on your actual data structure
+      }));
+
+      // Create a new workbook
+      const ws = XLSX.utils.json_to_sheet(exportData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Verified Riders');
+
+      // Set column widths
+      const colWidths = [
+        { wch: 20 }, // Name
+        { wch: 30 }, // Email
+        { wch: 15 }, // Phone
+        { wch: 20 }, // Verification Date
+        { wch: 18 }, // Current Employer
+        { wch: 15 }, // Vehicle Model
+        { wch: 15 }, // Employer Name
+        { wch: 15 }, // Employer ID
+      ];
+      ws['!cols'] = colWidths;
+
+      // Style header row
+      const headerStyle = {
+        font: { bold: true, color: 'FFFFFF', size: 12 },
+        fill: { fgColor: { rgb: '4CAF50' } },
+        alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+        border: {
+          top: { style: 'thin' },
+          bottom: { style: 'thin' },
+          left: { style: 'thin' },
+          right: { style: 'thin' },
+        },
+      };
+
+      // Apply header styling
+      const range = XLSX.utils.decode_range(ws['!ref']);
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        const address = XLSX.utils.encode_col(C) + '1';
+        if (!ws[address]) continue;
+        ws[address].s = headerStyle;
+      }
+
+      // Apply borders to data rows
+      const dataStyle = {
+        border: {
+          top: { style: 'thin' },
+          bottom: { style: 'thin' },
+          left: { style: 'thin' },
+          right: { style: 'thin' },
+        },
+      };
+
+      for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+          const address = XLSX.utils.encode_cell({ r: R, c: C });
+          if (!ws[address]) continue;
+          ws[address].s = dataStyle;
+        }
+      }
+
+      // Generate filename
+      const fileName = 'Riders_Verified.xlsx';
+
+      // Write the file
+      XLSX.writeFile(wb, fileName);
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Failed to export data');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const tabMeta = [
     {
       key: 'unverified',
@@ -300,7 +388,12 @@ const RidersComponent = () => {
             <Button variant="contained" color="primary">
               + Invite Rider
             </Button>
-            <OutlinedButton>📥 Export Verified</OutlinedButton>
+            <OutlinedButton
+              onClick={handleExportVerified}
+              disabled={exporting || verifiedRiders.length === 0}
+            >
+              {exporting ? '⏳ Exporting...' : '📥 Export Verified'}
+            </OutlinedButton>
             <Button
               variant="outlined"
               color="error"
