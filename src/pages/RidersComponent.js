@@ -120,6 +120,12 @@ const defaultRiderForm = {
   maritalStatus: '',
   dob: '',
   kycRequired: '',
+  aadhaarFront: null,
+  aadhaarBack: null,
+  panFront: null,
+  panBack: null,
+  licenseFront: null,
+  licenseBack: null,
 };
 
 const AddRiderModal = ({ open, onClose, onAdd }) => {
@@ -299,6 +305,170 @@ const AddRiderModal = ({ open, onClose, onAdd }) => {
                 label="NO"
               />
             </RadioGroup>
+          </Box>
+
+          {/* Document Uploads */}
+          <Box>
+            <Typography
+              sx={{ fontWeight: 700, fontSize: 15, color: '#333', mb: 1.5 }}
+            >
+              KYC Documents
+            </Typography>
+            <Stack spacing={2}>
+              {[
+                {
+                  label: 'Aadhaar Card',
+                  frontKey: 'aadhaarFront',
+                  backKey: 'aadhaarBack',
+                },
+                { label: 'PAN Card', frontKey: 'panFront', backKey: 'panBack' },
+                {
+                  label: 'Driving License',
+                  frontKey: 'licenseFront',
+                  backKey: 'licenseBack',
+                },
+              ].map(({ label, frontKey, backKey }) => (
+                <Box
+                  key={label}
+                  sx={{
+                    border: '1.5px solid #e5e7eb',
+                    borderRadius: '12px',
+                    p: 2,
+                    background: '#fafbfc',
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: 13,
+                      color: '#555',
+                      mb: 1.5,
+                    }}
+                  >
+                    {label}
+                  </Typography>
+                  <Stack direction="row" spacing={2}>
+                    {[
+                      { side: 'Front', key: frontKey },
+                      { side: 'Back', key: backKey },
+                    ].map(({ side, key }) => (
+                      <Box key={key} sx={{ flex: 1 }}>
+                        <input
+                          accept="image/*"
+                          id={`upload-${key}`}
+                          type="file"
+                          style={{ display: 'none' }}
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            const previewUrl = URL.createObjectURL(file);
+                            setForm((prev) => ({
+                              ...prev,
+                              [key]: { file, previewUrl },
+                            }));
+                            // reset input so same file can be re-selected
+                            e.target.value = '';
+                          }}
+                        />
+                        <label
+                          htmlFor={`upload-${key}`}
+                          style={{ width: '100%', display: 'block' }}
+                        >
+                          <Box
+                            sx={{
+                              border: '1.5px dashed',
+                              borderColor: form[key] ? '#4caf50' : '#c5cae9',
+                              borderRadius: '10px',
+                              height: 110,
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              cursor: 'pointer',
+                              overflow: 'hidden',
+                              background: form[key] ? '#f1f8e9' : '#fff',
+                              position: 'relative',
+                              transition: 'all 0.2s',
+                              '&:hover': {
+                                borderColor: '#4caf50',
+                                background: '#f9fbe7',
+                              },
+                            }}
+                          >
+                            {form[key] ? (
+                              <>
+                                <img
+                                  src={form[key].previewUrl}
+                                  alt={`${label} ${side}`}
+                                  style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover',
+                                    borderRadius: '8px',
+                                  }}
+                                />
+                                <Box
+                                  component="span"
+                                  sx={{
+                                    position: 'absolute',
+                                    top: 5,
+                                    right: 5,
+                                    background: 'rgba(0,0,0,0.5)',
+                                    borderRadius: '50%',
+                                    width: 22,
+                                    height: 22,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    zIndex: 1,
+                                  }}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    URL.revokeObjectURL(form[key].previewUrl);
+                                    setForm((prev) => ({
+                                      ...prev,
+                                      [key]: null,
+                                    }));
+                                  }}
+                                >
+                                  <CloseIcon
+                                    sx={{ fontSize: 14, color: '#fff' }}
+                                  />
+                                </Box>
+                              </>
+                            ) : (
+                              <>
+                                <Typography
+                                  sx={{ fontSize: 26, lineHeight: 1, mb: 0.5 }}
+                                >
+                                  📷
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    fontSize: 12,
+                                    color: '#777',
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  {side} Side
+                                </Typography>
+                                <Typography
+                                  sx={{ fontSize: 10, color: '#aaa', mt: 0.3 }}
+                                >
+                                  Click to upload
+                                </Typography>
+                              </>
+                            )}
+                          </Box>
+                        </label>
+                      </Box>
+                    ))}
+                  </Stack>
+                </Box>
+              ))}
+            </Stack>
           </Box>
         </Stack>
       </DialogContent>
