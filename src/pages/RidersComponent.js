@@ -19,7 +19,18 @@ import {
   Typography,
   Stack,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  FormLabel,
+  IconButton,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { styled } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
 import * as XLSX from 'xlsx';
@@ -96,6 +107,235 @@ const ToggleButton = styled(Box)(({ open }) => ({
   },
 }));
 
+// ── Add Rider Modal ────────────────────────────────────────────────
+const GENDER_OPTIONS = ['Male', 'Female', 'Other'];
+const MARITAL_OPTIONS = ['Single', 'Married', 'Divorced', 'Widowed'];
+
+const defaultRiderForm = {
+  firstName: '',
+  lastName: '',
+  phone: '',
+  email: '',
+  gender: '',
+  maritalStatus: '',
+  dob: '',
+  kycRequired: '',
+};
+
+const AddRiderModal = ({ open, onClose, onAdd }) => {
+  const [form, setForm] = useState(defaultRiderForm);
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleChange = (field) => (e) =>
+    setForm((prev) => ({ ...prev, [field]: e.target.value }));
+
+  const isValid =
+    form.firstName &&
+    form.lastName &&
+    form.phone &&
+    form.email &&
+    form.gender &&
+    form.maritalStatus &&
+    form.dob &&
+    form.kycRequired;
+
+  const handleSubmit = async () => {
+    if (!isValid) return;
+    setSubmitting(true);
+    try {
+      await onAdd(form);
+      setForm(defaultRiderForm);
+      onClose();
+    } catch (err) {
+      console.error('Add rider error:', err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleClose = () => {
+    setForm(defaultRiderForm);
+    onClose();
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth="sm"
+      fullWidth
+      PaperProps={{ sx: { borderRadius: '20px', p: 1 } }}
+    >
+      <DialogTitle sx={{ fontWeight: 700, fontSize: 20, pb: 0 }}>
+        Invite User to Bharath EV Fleet
+        <IconButton
+          onClick={handleClose}
+          size="small"
+          sx={{ position: 'absolute', right: 16, top: 16, color: '#888' }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+
+      <DialogContent sx={{ pt: 3 }}>
+        <Stack spacing={2.5}>
+          {/* Row 1: First Name + Last Name */}
+          <Stack direction="row" spacing={2}>
+            <TextField
+              label="First Name"
+              fullWidth
+              value={form.firstName}
+              onChange={handleChange('firstName')}
+              InputProps={{ sx: { borderRadius: '12px' } }}
+            />
+            <TextField
+              label="Last Name"
+              fullWidth
+              value={form.lastName}
+              onChange={handleChange('lastName')}
+              InputProps={{ sx: { borderRadius: '12px' } }}
+            />
+          </Stack>
+
+          {/* Row 2: Phone + Email */}
+          <Stack direction="row" spacing={2}>
+            <TextField
+              label="Phone Number"
+              fullWidth
+              value={form.phone}
+              onChange={handleChange('phone')}
+              type="tel"
+              InputProps={{
+                sx: { borderRadius: '12px' },
+                startAdornment: (
+                  <Box
+                    sx={{
+                      mr: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                    }}
+                  >
+                    <span style={{ fontSize: 20 }}>🇮🇳</span>
+                    <Typography sx={{ color: '#555', fontSize: 13 }}>
+                      ▾
+                    </Typography>
+                  </Box>
+                ),
+              }}
+            />
+            <TextField
+              label="Email ID"
+              fullWidth
+              value={form.email}
+              onChange={handleChange('email')}
+              type="email"
+              InputProps={{ sx: { borderRadius: '12px' } }}
+            />
+          </Stack>
+
+          {/* Row 3: Gender + Marital Status */}
+          <Stack direction="row" spacing={2}>
+            <TextField
+              select
+              label="Gender"
+              fullWidth
+              value={form.gender}
+              onChange={handleChange('gender')}
+              InputProps={{ sx: { borderRadius: '12px' } }}
+            >
+              {GENDER_OPTIONS.map((g) => (
+                <MenuItem key={g} value={g}>
+                  {g}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              select
+              label="Marital Status"
+              fullWidth
+              value={form.maritalStatus}
+              onChange={handleChange('maritalStatus')}
+              InputProps={{ sx: { borderRadius: '12px' } }}
+            >
+              {MARITAL_OPTIONS.map((m) => (
+                <MenuItem key={m} value={m}>
+                  {m}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Stack>
+
+          {/* Row 4: DOB full width */}
+          <TextField
+            label="Date of Birth"
+            fullWidth
+            value={form.dob}
+            onChange={handleChange('dob')}
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            InputProps={{ sx: { borderRadius: '12px' } }}
+          />
+
+          {/* Row 5: KYC Required full width */}
+          <Box>
+            <FormLabel sx={{ fontWeight: 600, fontSize: 14, color: '#333' }}>
+              Is KYC Required for the Rider ?
+            </FormLabel>
+            <RadioGroup
+              row
+              value={form.kycRequired}
+              onChange={handleChange('kycRequired')}
+              sx={{ mt: 0.5 }}
+            >
+              <FormControlLabel
+                value="YES"
+                control={<Radio color="default" />}
+                label="YES"
+              />
+              <FormControlLabel
+                value="NO"
+                control={<Radio color="default" />}
+                label="NO"
+              />
+            </RadioGroup>
+          </Box>
+        </Stack>
+      </DialogContent>
+
+      <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
+        <Button
+          onClick={handleClose}
+          variant="outlined"
+          sx={{
+            borderRadius: '12px',
+            textTransform: 'none',
+            fontWeight: 600,
+            borderColor: '#ccc',
+            color: '#333',
+            px: 3,
+          }}
+        >
+          Close
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          variant="contained"
+          disabled={!isValid || submitting}
+          sx={{
+            borderRadius: '12px',
+            textTransform: 'none',
+            fontWeight: 600,
+            px: 3,
+          }}
+        >
+          {submitting ? 'Adding...' : 'Add'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
 const RidersComponent = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('verified');
@@ -111,6 +351,9 @@ const RidersComponent = () => {
   const [fetchError, setFetchError] = useState('');
   const [loggingOut, setLoggingOut] = useState(false);
   const [exporting, setExporting] = useState(false);
+
+  // Add Rider Modal state
+  const [addRiderOpen, setAddRiderOpen] = useState(false);
 
   // Fetch data from FastAPI
   useEffect(() => {
@@ -146,6 +389,19 @@ const RidersComponent = () => {
       sessionStorage.removeItem('isLoggedIn');
       navigate('/', { replace: true });
     }
+  };
+
+  // Handle Add Rider submission
+  const handleAddRider = async (formData) => {
+    // POST to your API here, e.g.:
+    // const resp = await fetch('http://localhost:8000/riders', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(formData),
+    // });
+    console.log('New rider:', formData);
+    // Optionally re-fetch riders after adding:
+    // await fetchRiders();
   };
 
   // Partition by status
@@ -442,7 +698,12 @@ const RidersComponent = () => {
             </Typography>
           </Stack>
           <Stack direction="row" spacing={2} alignItems="center">
-            <Button variant="contained" color="primary">
+            {/* ── UPDATED: opens AddRiderModal on click ── */}
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setAddRiderOpen(true)}
+            >
               + Add Rider
             </Button>
             <Button variant="contained" color="primary">
@@ -971,6 +1232,13 @@ const RidersComponent = () => {
           </Paper>
         )}
       </Box>
+
+      {/* ── Add Rider Modal ── */}
+      <AddRiderModal
+        open={addRiderOpen}
+        onClose={() => setAddRiderOpen(false)}
+        onAdd={handleAddRider}
+      />
     </Box>
   );
 };
