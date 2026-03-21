@@ -20,8 +20,6 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import BusinessIcon from '@mui/icons-material/Business';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import PersonIcon from '@mui/icons-material/Person';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 
 const SidebarOverlay = styled(Box)(({ open }) => ({
@@ -150,6 +148,7 @@ const Sidebar = ({ open, onToggle }) => {
     riders: true,
     vehicles: false,
     employers: false,
+    payments: false,
   });
 
   const toggleExpand = (key) => {
@@ -206,8 +205,8 @@ const Sidebar = ({ open, onToggle }) => {
           <SectionLabel>Overview</SectionLabel>
           <StyledListItem
             button
-            active={isActive('/dashboard')}
-            onClick={() => handleNavigation('/dashboard')}
+            active={isActive('/Dashboard')}
+            onClick={() => handleNavigation('/Dashboard')}
           >
             <ListItemIcon>
               <AssessmentIcon />
@@ -219,8 +218,8 @@ const Sidebar = ({ open, onToggle }) => {
           <SectionLabel>Management</SectionLabel>
           <StyledListItem
             button
-            active={isActive('/portal-users')}
-            onClick={() => handleNavigation('/portal-users')}
+            active={isActive('/EmployeesListComponent')}
+            onClick={() => handleNavigation('/EmployeesListComponent')}
           >
             <ListItemIcon>
               <PeopleIcon />
@@ -232,11 +231,7 @@ const Sidebar = ({ open, onToggle }) => {
           <StyledListItem
             button
             active={
-              isActive('/RidersComponent') ||
-              isActive('/riders/verification') ||
-              isActive('/riders/engagement') ||
-              isActive('/riders/lead') ||
-              isActive('/riders/notifications')
+              isActive('/RidersComponent') || isActive('/EngagementComponent')
             }
             onClick={() => toggleExpand('riders')}
           >
@@ -263,8 +258,8 @@ const Sidebar = ({ open, onToggle }) => {
             </SubListItem>
             <SubListItem
               button
-              active={isActive('/riders/engagement')}
-              onClick={() => handleNavigation('/riders/engagement')}
+              active={isActive('/EngagementComponent')}
+              onClick={() => handleNavigation('/EngagementComponent')}
             >
               <ListItemText primary="Engagement" />
             </SubListItem>
@@ -287,7 +282,10 @@ const Sidebar = ({ open, onToggle }) => {
           {/* Vehicles with Submenu */}
           <StyledListItem
             button
-            active={isActive('/vehicles')}
+            active={
+              isActive('/VehiclesSummaryComponent') ||
+              isActive('/VehicleMaintenanceComponent')
+            }
             onClick={() => toggleExpand('vehicles')}
           >
             <ListItemIcon>
@@ -299,17 +297,24 @@ const Sidebar = ({ open, onToggle }) => {
           <Collapse in={expandedItems.vehicles} timeout="auto" unmountOnExit>
             <SubListItem
               button
-              active={isActive('/vehicles/list')}
-              onClick={() => handleNavigation('/vehicles/list')}
+              active={isActive('/VehiclesSummaryComponent')}
+              onClick={() => handleNavigation('/VehiclesSummaryComponent')}
             >
               <ListItemText primary="List" />
+            </SubListItem>
+            <SubListItem
+              button
+              active={isActive('/VehicleMaintenanceComponent')}
+              onClick={() => handleNavigation('/VehicleMaintenanceComponent')}
+            >
+              <ListItemText primary="Maintenance" />
             </SubListItem>
           </Collapse>
 
           {/* Employers with Submenu */}
           <StyledListItem
             button
-            active={isActive('/employers')}
+            active={isActive('/EmployeesListComponent')}
             onClick={() => toggleExpand('employers')}
           >
             <ListItemIcon>
@@ -321,8 +326,8 @@ const Sidebar = ({ open, onToggle }) => {
           <Collapse in={expandedItems.employers} timeout="auto" unmountOnExit>
             <SubListItem
               button
-              active={isActive('/employers/list')}
-              onClick={() => handleNavigation('/employers/list')}
+              active={isActive('/EmployeesListComponent')}
+              onClick={() => handleNavigation('/EmployeesListComponent')}
             >
               <ListItemText primary="List" />
             </SubListItem>
@@ -332,47 +337,53 @@ const Sidebar = ({ open, onToggle }) => {
           <SectionLabel>Payment Management</SectionLabel>
           <StyledListItem
             button
-            active={isActive('/payment/summary')}
-            onClick={() => handleNavigation('/payment/summary')}
+            active={
+              isActive('/Payments') ||
+              isActive('/UserSummaryComponent') ||
+              isActive('/VehiclesSummaryComponent') ||
+              isActive('/RefundSummaryComponent')
+            }
+            onClick={() => toggleExpand('payments')}
           >
             <ListItemIcon>
               <AccountBalanceWalletIcon />
             </ListItemIcon>
-            <ListItemText primary="Summary" />
+            <ListItemText primary="Payments" />
+            {expandedItems.payments ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </StyledListItem>
-
-          <StyledListItem
-            button
-            active={isActive('/payment/user')}
-            onClick={() => handleNavigation('/payment/user')}
-          >
-            <ListItemIcon>
-              <PersonIcon />
-            </ListItemIcon>
-            <ListItemText primary="User" />
-          </StyledListItem>
-
-          <StyledListItem
-            button
-            active={isActive('/payment/vehicle')}
-            onClick={() => handleNavigation('/payment/vehicle')}
-          >
-            <ListItemIcon>
-              <LocalShippingIcon />
-            </ListItemIcon>
-            <ListItemText primary="Vehicle" />
-          </StyledListItem>
-
-          <StyledListItem
-            button
-            active={isActive('/payment/deposits')}
-            onClick={() => handleNavigation('/payment/deposits')}
-          >
-            <ListItemIcon>
-              <TrendingUpIcon />
-            </ListItemIcon>
-            <ListItemText primary="Deposits" />
-          </StyledListItem>
+          <Collapse in={expandedItems.payments} timeout="auto" unmountOnExit>
+            <SubListItem
+              button
+              active={isActive('/Payments')}
+              onClick={() => handleNavigation('/Payments')}
+            >
+              <ListItemText primary="Summary" />
+            </SubListItem>
+            <SubListItem
+              button
+              active={isActive('/UserSummaryComponent')}
+              onClick={() => handleNavigation('/UserSummaryComponent')}
+            >
+              <ListItemIcon>
+                <PersonIcon />
+              </ListItemIcon>
+              <ListItemText primary="User" />
+            </SubListItem>
+            <SubListItem
+              button
+              active={isActive('/VehiclesSummaryComponent')}
+              onClick={() => handleNavigation('/VehiclesSummaryComponent')}
+            >
+              <ListItemText primary="Vehicle" />
+            </SubListItem>
+            <SubListItem
+              button
+              active={isActive('/RefundSummaryComponent')}
+              onClick={() => handleNavigation('/RefundSummaryComponent')}
+            >
+              <ListItemText primary="Deposits" />
+            </SubListItem>
+          </Collapse>
 
           {/* GEOFENCE MANAGEMENT Section */}
           <SectionLabel>Geofence Management</SectionLabel>
